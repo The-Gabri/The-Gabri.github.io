@@ -1,0 +1,1227 @@
+<html><head><base href="/" />
+<title>The Yellow Book - Classified</title>
+<meta name="description" content="The Yellow Book - Sistema de información clasificada">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+  :root {
+    --primary: #1a1a1a;
+    --secondary: #ffd700;
+    --accent: #ff6b6b;
+    --dark: #121212;
+    --text: #f0f0f0;
+  }
+
+  * {
+    box-sizing: border-box;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  body {
+    margin: 0;
+    padding: 20px;
+    background: var(--dark);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #1e1e1e;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+    border: 1px solid var(--secondary);
+    position: relative;
+    transition: opacity 0.5s ease;
+  }
+
+  h1 {
+    color: var(--secondary);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(255, 215, 0, 0.3);
+    position: relative;
+  }
+
+  h1::before, h1::after {
+    content: "⚠";
+    margin: 0 15px;
+    color: var(--secondary);
+    animation: blink 2s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .chat-container {
+    display: flex;
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .chat-box {
+    flex: 1;
+  }
+
+  .chat-area {
+    height: 500px;
+    overflow-y: auto;
+    border: 1px solid var(--secondary);
+    padding: 1rem;
+    border-radius: 10px;
+    background: #252525;
+    scrollbar-width: thin;
+    scrollbar-color: var(--secondary) #252525;
+    font-size: 1.1rem;
+  }
+
+  .message {
+    margin: 0.8rem 0;
+    padding: 1rem 1.2rem;
+    border-radius: 15px;
+    max-width: 85%;
+    position: relative;
+    animation: messageAppear 0.3s ease-out;
+    transition: all 0.3s ease;
+  }
+
+  @keyframes messageAppear {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .bot {
+    background: #333;
+    color: var(--secondary);
+    margin-right: 20%;
+    border: 1px solid var(--secondary);
+  }
+
+  .user {
+    background: #2a2a2a;
+    color: var(--text);
+    margin-left: 15%;
+    border: 1px solid #444;
+  }
+
+  .error {
+    background: rgba(255, 68, 68, 0.2);
+    color: var(--warning);
+    border: 1px solid var(--warning);
+  }
+
+  .input-area {
+    margin-top: 1rem;
+    display: flex;
+    gap: 10px;
+    opacity: 0.5;
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+
+  .input-area.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  input {
+    flex: 1;
+    padding: 1rem;
+    background: #2a2a2a;
+    border: 1px solid var(--secondary);
+    border-radius: 5px;
+    font-size: 1.1rem;
+    color: var(--text);
+  }
+
+  input:focus {
+    outline: none;
+    box-shadow: 0 0 10px var(--secondary);
+  }
+
+  button {
+    background: #000;
+    color: var(--secondary);
+    border: 1px solid var(--secondary);
+    padding: 1rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+  }
+
+  button:hover {
+    background: var(--secondary);
+    color: #000;
+    transform: scale(1.05);
+  }
+
+  .help-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--dark);
+    color: var(--secondary);
+    border: 2px solid var(--secondary); 
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .help-button:hover {
+    transform: scale(1.1) rotate(10deg);
+    background: var(--secondary);
+    color: var(--dark);
+    box-shadow: 0 0 25px var(--secondary);
+  }
+
+  .typing-indicator {
+    display: none;
+    padding: 15px;
+    background: #333333aa;
+    border: 1px solid var(--secondary);
+    border-radius: 10px;
+    margin: 10px 0;
+    color: var(--secondary);
+    text-align: center;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    animation: glow 2s infinite;
+  }
+
+  .thinking-dots {
+    display: inline-block;
+    margin-left: 5px;
+  }
+
+  .thinking-dots::after {
+    content: '';
+    animation: thinking-dots 1.5s infinite;
+  }
+
+  @keyframes thinking-dots {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
+    100% { content: ''; }
+  }
+
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
+    50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+  }
+
+  @keyframes rgbEffect {
+    0% { color: #ff0000; }
+    20% { color: #ff8800; }
+    40% { color: #ffff00; }
+    60% { color: #00ff00; }
+    80% { color: #0000ff; }
+    100% { color: #ff0000; }
+  }
+
+  .rgb-active {
+    animation: rgbEffect 3s infinite;
+  }
+
+  .command-palette {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--dark);
+    border: 1px solid var(--secondary);
+    border-radius: 10px;
+    padding: 15px;
+    display: none;
+    z-index: 900;
+  }
+
+  .command-shortcut {
+    display: inline-block;
+    background: #333;
+    padding: 3px 8px;
+    border-radius: 5px;
+    margin: 0 5px;
+    color: var(--secondary);
+    font-size: 0.9em;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+  }
+
+  .modal-content {
+    background: #1e1e1e;
+    margin: 10% auto;
+    padding: 2rem;
+    border: 1px solid var(--secondary);
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--secondary) #252525;
+  }
+
+  .modal-content ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .modal-content li {
+    margin: 10px 0;
+    padding: 10px;
+    background: #2a2a2a;
+    border: 1px solid var(--secondary);
+    border-radius: 5px;
+  }
+
+  .modal-content h2 {
+    color: var(--secondary);
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .close {
+    float: right;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: var(--secondary);
+  }
+
+  .status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #000;
+    color: var(--secondary);
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    border-top: 1px solid var(--secondary);
+  }
+
+  .timestamp {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 5px;
+  }
+
+  .login-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.5s ease;
+  }
+
+  .login-box {
+    background: #1e1e1e;
+    padding: 2rem;
+    border-radius: 10px;
+    border: 1px solid var(--secondary);
+    text-align: center;
+  }
+
+  .login-box input {
+    margin: 10px 0;
+  }
+
+  .password-error {
+    color: var(--warning);
+    margin-top: 10px;
+    display: none;
+  }
+
+  .disclaimer {
+    margin-top: 10px;
+    color: var(--secondary);
+    font-size: 0.8rem;
+  }
+
+  .theme-blue {
+    --primary: #1a1a2e;
+    --secondary: #4169e1;
+    --accent: #00bfff;
+    --dark: #0a0a1c;
+    --text: #e0e0e0;
+  }
+
+  .theme-purple {
+    --primary: #2d1b4e;
+    --secondary: #9b4dca;
+    --accent: #e056fd;
+    --dark: #1a0f2e;
+    --text: #f0e6ff;
+  }
+
+  .high-contrast {
+    --primary: #000000;
+    --secondary: #ffffff;
+    --accent: #ffff00;
+    --dark: #000000;
+    --text: #ffffff;
+  }
+
+</style>
+</head>
+<body>
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <h2>ACCESO RESTRINGIDO</h2>
+    <input type="password" id="passwordInput" placeholder="Ingrese contraseña">
+    <button onclick="verificarPassword()">ACCEDER</button>
+    <div class="password-error" id="passwordError">Contraseña incorrecta</div>
+  </div>
+</div>
+
+<div class="container" style="display: none;">
+  <h1>The Yellow Book</h1>
+  
+  <div class="chat-container">
+    <div class="chat-box">
+      <div class="chat-area" id="chatArea" role="log" aria-live="polite"></div>
+      <div class="typing-indicator" id="typingIndicator">
+        <span></span>
+      </div>
+      <div class="input-area active">
+        <input type="text" id="userInput" placeholder="Ingrese su consulta..." onkeypress="if(event.key === 'Enter') enviarPregunta()">
+        <button onclick="enviarPregunta()">EJECUTAR</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    <p>Los datos mostrados son solo para fines educativos. La precisión no está garantizada.</p>
+  </div>
+</div>
+
+<button class="help-button" onclick="mostrarAyuda()">?</button>
+
+<div class="command-palette">
+  <div>Presiona <span class="command-shortcut">?</span> para ayuda</div>
+  <div>Presiona <span class="command-shortcut">Esc</span> para cerrar</div>
+</div>
+
+<div id="helpModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarAyuda()">&times;</span>
+    <h2>Comandos Disponibles</h2>
+    <ul>
+      <li>🎂 Cumpleaños: "¿Cuándo es el cumpleaños de [nombre]?"</li>
+      <li>⭐ Reputación: "¿Qué reputación tiene [nombre]?"</li>
+      <li>💝 Crush: "¿Quién es el crush de [nombre]?"</li>
+      <li>👥 Amigos: "¿Quiénes son los amigos de [nombre]?"</li>
+      <li>🎮 Actividad: "¿Cuál es la actividad favorita de [nombre]?"</li>
+      <li>🎨 Color: "¿Cuál es el color favorito de [nombre]?"</li>
+      <li>📋 Información completa: "Dime todo sobre [nombre]"</li>
+      <li>📱 Teléfono: "¿Cuál es el teléfono de [nombre]?"</li>
+      <li>🔄 Comandos múltiples: "Dime el crush de [nombre] y el color favorito de [nombre]"</li>
+      <li>💡 Cambiar tema: "modo claro", "modo oscuro", "modo azul", "modo morado"</li>
+      <li>🔍 Búsqueda avanzada: 
+        <ul>
+          <li>"buscar [término]" - Busca en toda la base de datos</li>
+          <li>"filtrar [criterio]" - Filtra resultados por criterio</li>
+        </ul>
+      </li>
+      <li>🎨 Personalización:
+        <ul>
+          <li>"modo [claro/oscuro]" - Cambiar tema</li>
+          <li>"rgb!" - Activar modo RGB</li>
+          <li>"modo azul" - Activar tema azul</li>
+          <li>"modo morado" - Activar tema morado</li>
+        </ul>
+      </li>
+      <li>🔄 Sistema de traducción:
+        <ul>
+          <li>"lengua [texto]" - Traduce al idioma secreto</li>
+          <li>"[texto en secreto]" - Traduce de vuelta</li>
+        </ul>
+      </li>
+    </ul>
+    <div class="changelog-section">
+      <h3>Últimas actualizaciones (v1.2.0)</h3>
+      <ul>
+        <li>Nueva función de pensamiento añadida</li>
+        <li>Mejoras en la interfaz de usuario</li>
+        <li>Sistema de múltiples comandos mejorado</li>
+        <li>Selector de temas claro/oscuro</li>
+        <li>Sistema de traducción secreto</li>
+        <li>Corrección de errores menores</li>
+      </ul>
+    </div>
+    <p style="color: var(--secondary); margin-top: 20px; text-align: center;">
+      Nombres disponibles: Jaime, Nerea, Kevin, Pablo, Vega, Oscar, Alonso, Jose, Neizan, Alma, Marcos, Alberto, Mohamed, Annaleah, Veronica, Alex, Isley, Cristobal, Steven, Ezequiel, India, Kristopher, Adrian, Gabriel, Miguel, Valeria, Andrea, Rodrigo, Paula
+    </p>
+  </div>
+</div>
+
+<div class="status-bar" id="statusBar">
+  Sistema operativo || Acceso autorizado || v1.2.0 || Creado por Gabriel Rubio Montero || Última actualización: <span id="lastUpdate"></span>
+  <span id="changelogBtn" style="margin-left: 15px; cursor: pointer">📋 Ver cambios</span>
+</div>
+
+<div class="modal" id="changelogModal">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarChangelog()">&times;</span>
+    <h2>Registro de Cambios v1.2.0</h2>
+    <ul>
+      <li>Nueva función de pensamiento añadida</li>
+      <li>Mejoras en la interfaz de usuario</li>
+      <li>Sistema de múltiples comandos mejorado</li>
+      <li>Selector de temas claro/oscuro</li>
+      <li>Sistema de traducción secreto</li>
+      <li>Corrección de errores menores</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+const SYSTEM_PASSWORD = "Web";
+const VERSION = "1.2.0";
+const CHANGELOG = [
+  "Nueva función de pensamiento añadida",
+  "Mejoras en la interfaz de usuario",
+  "Sistema de múltiples comandos mejorado",
+  "Selector de temas claro/oscuro",
+  "Sistema de traducción secreto",
+  "Corrección de errores menores"
+];
+
+const datos = {
+  jaime: {
+    nombre: "Jaime Amorós García",
+    cumpleanos: "13/01/2012",
+    reputacion: "100",
+    crush: "Nadie",
+    amigo: "Pablo Martin Gabriel Steven y Neizan",
+    actividad: "Videojuegos", 
+    color: "rojo y negro",
+    telefono: "+34667071064"
+  },
+  nerea: {
+    nombre: "Nerea Belsué Guerrero",
+    cumpleanos: "28/08/2012",
+    reputacion: "100",
+    crush: "Gabriel y Ferran",
+    amigo: "Vero, Alma, Gabri y Analeh",
+    actividad: "Ver TikTok",
+    color: "Negro y Blanco",
+    telefono: "Desconocido"
+  },
+  kevin: {
+    nombre: "Kevin Samuel Cuero Caballer",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Nadie",
+    amigo: "Ezequiel, Mohamed",
+    actividad: "Videojuegos",
+    color: "Rojo",
+    telefono: "Desconocido" 
+  },
+  pablo: {
+    nombre: "Pablo Echániz Sierra",
+    cumpleanos: "11/10/2012",
+    reputacion: "100",
+    crush: "Nadie ptas",
+    amigo: "Jaime, Pablo, Steven, Martin",
+    actividad: "Videojuegos y Piraguismo",
+    color: "Azul",
+    telefono: "Desconocido"
+  },
+  vega: {
+    nombre: "Vega Esteruelas Gutiérrez",
+    cumpleanos: "12/01/2012",
+    reputacion: "100",
+    crush: "Nadie",
+    amigo: "Valeria,Moha,Isley,Cristobal",
+    actividad: "Boxeo",
+    color: "Azul",
+    telefono: "+34632903043"
+  },
+  oscar: {
+    nombre: "Óscar Galindo Esteban",
+    cumpleanos: "22/08/2012",
+    reputacion: "100",
+    crush: "Nadie",
+    amigo: "Neizan",
+    actividad: "Futbol",
+    color: "Desconocido",
+    telefono: "Desconocido"
+  },
+  alonso: {
+    nombre: "Alonso García Sarasa",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Desconocido",
+    amigo: "Jaime y Marcos",
+    actividad: "Basket y futbol",
+    color: "Desconocido",
+    telefono: "Desconocido"
+  },
+  jose: {
+    nombre: "José Daniel Giménez Burillo",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Desconocido",
+    amigo: "Cristobal, Ezequiel, Valeria, Vega",
+    actividad: "Futbol, no venir a clase",
+    color: "Desconocido",
+    telefono: "Desconocido"
+  },
+  neizan: {
+    nombre: "Neizan Gracia Aramendía",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Nadie",
+    amigo: "Alberto, Jaime, Steven",
+    actividad: "Futbol",
+    color: "Desconocido",
+    telefono: "Desconocido"
+  },
+  alma: {
+    nombre: "Alma Herrera Sánchez",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Desconocido",
+    amigo: "Nerea, Vero, Analee",
+    actividad: "Hablar, TikTok, Balet",
+    color: "Desconocido",
+    telefono: "Desconocido"
+  },
+  marcos: {
+    nombre: "Marcos Hidalgo Espada",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Nadie",
+    amigo: "Alonso, Gabriel",
+    actividad: "Hablar",
+    color: "Desconocido",
+    telefono: "Desconocido"
+  },
+  alberto: {
+    nombre: "Alberto Joven Torrubia",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Nadie",
+    amigo: "Jaime, Steven, Neizan",
+    actividad: "Futbol",
+    color: "Desconocido",
+    telefono: "+34665600780"
+  },
+  mohamed: {
+    nombre: "Mohamed Kliha",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Martina",
+    amigo: "Valeria,Vega,Isley,Cristobal, ezequiel, cristobal, kevin",
+    actividad: "Futbol",
+    color: "Desconocido",
+    telefono: "+34602184708"
+  },
+  annaleah: {
+    nombre: "Annaleah Akuah Manu Agu",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Desconocido",
+    amigo: "Nerea, Vero, Alma",
+    actividad: "Hablar",
+    color: "Desconocido",
+    telefono: "+34641590445" 
+  },
+  veronica: {
+    nombre: "Verónica Montalbán Egea",
+    cumpleanos: "Desconocido",
+    reputacion: "0",
+    crush: "Ezequiel, mas personas",
+    amigo: "Nerea, Alma, Analee",
+    actividad: "tiktok",
+    color: "Azul",
+    telefono: "+34643233459"
+  },
+  alex: {
+    nombre: "Álex Montull Renieblas",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Vega",
+    amigo: "Marcos",
+    actividad: "Desconocido",
+    color: "Desconocido",
+    telefono: "Desconocido"
+  },
+  isley: {
+    nombre: "Isley Alejandro Morales",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Desconocido",
+    amigo: "Valeria,Vega,Isley,Cristobal, ezequiel, cristobal, kevin",
+    actividad: "Futbol",
+    color: "Desconocido",
+    telefono: "+34602591477"
+  },
+  cristobal: {
+    nombre: "Cristóbal Narváez Santacruz",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Tiene novia",
+    amigo: "Valeria,Moha,Isley,Miguel,Kevin",
+    actividad: "Futbol, hablar",
+    color: "Desconocido",
+    telefono: "Desconocido"
+  },
+  steven: {
+    nombre: "Steven Palechor Chamorro",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Nerea",
+    amigo: "Jaime, Pablo, Steven, Martin, Neizan, Alberto, laVezzi",
+    actividad: "Futbol, hablar",
+    color: "Desconocido",
+    telefono: "+34641858265"
+  },
+  ezequiel: {
+    nombre: "Lavezzi Ezequiel Pérez",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Alma",
+    amigo: "Valeria,Moha,Isley,Cristobal, Steven",
+    actividad: "Futbol",
+    color: "Desconocido",
+    telefono: "Desconocido"
+  },
+  india: {
+    nombre: "India Peteiro Gamboa",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Desconocido",
+    amigo: "Vega, Andrea, Paula",
+    actividad: "tiktok, bailar",
+    color: "Desconocido",
+    telefono: "+34611268128"
+  },
+  kristopher: {
+    nombre: "Kristopher Aarón Reyes Mejías",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Nadie",
+    amigo: "Vero, Alma, nerea, Neizan",
+    actividad: "Futbol",
+    color: "Desconocido",
+    telefono: "Desconocido"
+  },
+  adrian: {
+    nombre: "Adrián Rivera Blanco",
+    cumpleanos: "Desconocido",
+    reputacion: "100",
+    crush: "Su amigo",
+    amigo: "Isley",
+    actividad: "Futbol",
+    color: "Desconocido",
+    telefono: "Desconocido"
+  },
+  gabriel: {
+    nombre: "Gabriel Rubio Montero",
+    cumpleanos: "18/07/2012",
+    reputacion: "100",
+    crush: "Nadie ptas",
+    amigo: "Jaime, Pablo, Steven, Martin",
+    actividad: "Programar",
+    color: "Azul",
+    telefono: "+34633014280"
+  },
+  miguel: {
+    nombre: "Miguel Ángel Salazar Giraldo",
+    cumpleanos: "15/02/2012",
+    reputacion: "100",
+    crush: "Desconocido",
+    amigo: "Cristobal Jaime",
+    actividad: "Basket y futbol",
+    color: "Azul Amarillo",
+    telefono: "Desconocido"
+  },
+  valeria: {
+    nombre: "Valeria Tercero Fraga",
+    cumpleanos: "09/10/2011",
+    reputacion: "100",
+    crush: "Hermano vega",
+    amigo: "Vega, Isley y Mohamed",
+    actividad: "Quedar con Vega",
+    color: "Amarillo",
+    telefono: "+34643112905"
+  },
+  andrea: {
+    nombre: "Andrea Trol Burillo",
+    cumpleanos: "03/03/2012",
+    reputacion: "100",
+    crush: "Romeo",
+    amigo: "Paula",
+    actividad: "Bailar",
+    color: "Morado",
+    telefono: "+34647468647"
+  },
+  rodrigo: {
+    nombre: "Rodrigo Valencia Nevado",
+    cumpleanos: "14/12/2012",
+    reputacion: "100",
+    crush: "Nadie",
+    amigo: "Marcos, Neizan",
+    actividad: "Futbol",
+    color: "Desconocido",
+    telefono: "Desconocido"
+  },
+  paula: {
+    nombre: "Paula Vela Segura",
+    cumpleanos: "24/07/2024",
+    reputacion: "100",
+    crush: "Nicolás",
+    amigo: "Andrea",
+    actividad: "Stripear",
+    color: "Morado",
+    telefono: "+34697546937"
+  }
+};
+
+const userProfiles = {
+  notes: {},
+  nicknames: {},
+  
+  addNote(userId, note) {
+    if (!this.notes[userId]) this.notes[userId] = [];
+    this.notes[userId].push({
+      text: note,
+      timestamp: new Date()
+    });
+  },
+  
+  setNickname(userId, nickname) {
+    this.nicknames[userId] = nickname;
+  }
+};
+
+const security = {
+  lastActivity: Date.now(),
+  timeoutMinutes: 30,
+  
+  checkTimeout() {
+    if (Date.now() - this.lastActivity > this.timeoutMinutes * 60 * 1000) {
+      this.logout();  
+    }
+  },
+  
+  updateActivity() {
+    this.lastActivity = Date.now();
+  },
+  
+  logout() {
+    document.querySelector('.login-screen').style.display = 'flex';
+    document.querySelector('.container').style.display = 'none';
+  }
+};
+
+setInterval(() => security.checkTimeout(), 60000);
+document.addEventListener('mousemove', () => security.updateActivity());
+
+const themes = {
+  light: {
+    primary: '#ffffff',
+    secondary: '#ffd700',
+    accent: '#ff6b6b',
+    dark: '#f0f0f0',
+    text: '#1a1a1a'
+  },
+  dark: {
+    primary: '#1a1a1a',
+    secondary: '#ffd700',
+    accent: '#ff6b6b',
+    dark: '#121212',
+    text: '#f0f0f0'
+  },
+  blue: {
+    primary: '#1a1a2e',
+    secondary: '#4169e1',
+    accent: '#00bfff',
+    dark: '#0a0a1c',
+    text: '#e0e0e0'
+  },
+  purple: {
+    primary: '#2d1b4e',
+    secondary: '#9b4dca',
+    accent: '#e056fd',
+    dark: '#1a0f2e',
+    text: '#f0e6ff'
+  }
+};
+
+function toggleTheme(theme) {
+  const root = document.documentElement;
+  const selectedTheme = themes[theme];
+  
+  for (const [key, value] of Object.entries(selectedTheme)) {
+    root.style.setProperty(`--${key}`, value);
+  }
+
+  if (theme === 'rgb') {
+    startRGBAnimation();
+  } else {
+    stopRGBAnimation(); 
+  }
+}
+
+function advancedSearch(criteria) {
+  const results = [];
+  for (let estudiante in datos) {
+    if (matchesCriteria(datos[estudiante], criteria)) {
+      results.push(datos[estudiante]);
+    }
+  }
+  return results;
+}
+
+function matchesCriteria(user, criteria) {
+  return Object.entries(criteria).every(([key, value]) => {
+    if (typeof value === 'string') {
+      return user[key]?.toLowerCase().includes(value.toLowerCase());
+    }
+    return user[key] === value;
+  });
+}
+
+function showTypingIndicator() {
+  const indicator = document.querySelector('.typing-indicator');
+  indicator.style.display = 'block';
+  
+  const messages = [
+    "🤔 Analizando datos clasificados",
+    "🔍 Decodificando información",
+    "💭 Procesando consulta",
+    "📊 Verificando registros",
+    "🔐 Accediendo a archivos seguros"
+  ];
+  
+  const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+  indicator.innerHTML = `${randomMessage}<span class="thinking-dots"></span>`;
+  
+  document.querySelector('.input-area').classList.remove('active');
+  
+  setTimeout(() => {
+    indicator.style.display = 'none';
+    document.querySelector('.input-area').classList.add('active');
+  }, 1500);
+}
+
+function addMessage(message, isBot = true, isError = false) {
+  const chatArea = document.getElementById('chatArea');
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `message ${isBot ? 'bot' : 'user'} ${isError ? 'error' : ''}`;
+  
+  const timestamp = new Date().toLocaleTimeString();
+  messageDiv.innerHTML = `
+    ${isBot ? `[SISTEMA]: ${message}` : `[CONSULTA]: ${message}`}
+    <div class="timestamp">${timestamp}</div>
+  `;
+  
+  chatArea.appendChild(messageDiv);
+  chatArea.scrollTop = chatArea.scrollHeight;
+  
+  document.getElementById('lastUpdate').textContent = timestamp;
+}
+
+function verificarPassword() {
+  const password = document.getElementById('passwordInput').value;
+  if (password === SYSTEM_PASSWORD) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.querySelector('.container').style.display = 'block';
+    addMessage("SISTEMA INICIADO. ACCESO A DATOS CLASIFICADOS CONCEDIDO.");
+  } else {
+    document.getElementById('passwordError').style.display = 'block';
+  }
+}
+
+const secretLanguage = {
+  a: 'xi', b: 'po', c: 'zu', d: 'me', e: 'ra', 
+  f: 'ti', g: 'no', h: 'lu', i: 'sa', j: 'ky',
+  k: 'we', l: 'va', m: 'jo', n: 'di', o: 'xu',
+  p: 'fe', q: 'ga', r: 'hi', s: 'mu', t: 'be',
+  u: 'yo', v: 'ka', w: 'zi', x: 'ru', y: 'na', z: 'qi'
+};
+
+function translateToSecret(text) {
+  return text.toLowerCase().split('').map(char => 
+    secretLanguage[char] || char).join('');
+}
+
+function translateFromSecret(text) {
+  const reverseDict = Object.fromEntries(
+    Object.entries(secretLanguage).map(([k, v]) => [v, k])
+  );
+  
+  return text.match(/.{1,2}/g).map(pair => 
+    reverseDict[pair] || pair).join('');
+}
+
+function procesarPregunta(pregunta) {
+  pregunta = pregunta.toLowerCase().trim();
+  
+  if (!pregunta) {
+    return {
+      mensaje: "ERROR: Por favor ingrese una consulta válida.",
+      error: true
+    };
+  }
+
+  if (pregunta.startsWith('buscar ')) {
+    const term = pregunta.slice(7);
+    let results = [];
+    for (let estudiante in datos) {
+      if (JSON.stringify(datos[estudiante]).toLowerCase().includes(term.toLowerCase())) {
+        results.push(estudiante);
+      }
+    }
+    return {
+      mensaje: `Resultados de búsqueda para "${term}": ${results.join(', ')}`,
+      encontrado: true
+    };
+  }
+
+  if (pregunta.startsWith('filtrar ')) {
+    const filter = pregunta.slice(8);
+    let filtered = [];
+    for (let estudiante in datos) {
+      if (datos[estudiante][filter]) {
+        filtered.push(`${datos[estudiante].nombre}: ${datos[estudiante][filter]}`);
+      }
+    }
+    return {
+      mensaje: `Filtrado por ${filter}:\n${filtered.join('\n')}`,
+      encontrado: true
+    };
+  }
+
+  const commands = pregunta.split(" y ");
+  
+  if (commands.length > 1) {
+    let respuestas = [];
+    for (let cmd of commands) {
+      const res = procesarComandoIndividual(cmd.trim());
+      if (res.encontrado) {
+        respuestas.push(res.mensaje);
+      }
+    }
+    
+    if (respuestas.length > 0) {
+      return {
+        mensaje: respuestas.join("\n"),
+        error: false
+      };
+    }
+  }
+
+  const resultado = procesarComandoIndividual(pregunta);
+  return {
+    mensaje: resultado.mensaje,
+    error: !resultado.encontrado
+  };
+}
+
+function procesarComandoIndividual(pregunta) {
+  let respuesta = "ERROR: Consulta no reconocida.";
+  let encontrado = false;
+
+  if (pregunta.match(/^(modo claro|modo oscuro|modo azul|modo morado)$/i)) {
+    const theme = pregunta.toLowerCase().includes('claro') ? 'light' : 
+                  pregunta.toLowerCase().includes('oscuro') ? 'dark' :
+                  pregunta.toLowerCase().includes('azul') ? 'blue' :
+                  'purple';
+    toggleTheme(theme);
+    return {
+      mensaje: `Tema cambiado a ${pregunta}`,
+      encontrado: true
+    };
+  }
+  
+  if (pregunta.toLowerCase() === 'rgb!') {
+    toggleTheme('rgb');
+    return {
+      mensaje: "🌈 Tema RGB activado",
+      encontrado: true
+    };
+  }
+
+  if (pregunta.toLowerCase().startsWith('lengua ')) {
+    const text = pregunta.slice(7);
+    const translation = translateToSecret(text);
+    return {
+      mensaje: `Traducción al idioma secreto: "${translation}"`,
+      encontrado: true
+    };
+  }
+  
+  if (pregunta.match(/^[a-z]{2}(\s[a-z]{2})*$/)) {
+    try {
+      const translation = translateFromSecret(pregunta);
+      return {
+        mensaje: `Traducción al español: "${translation}"`,
+        encontrado: true
+      };
+    } catch(e) {
+      return {
+        mensaje: "Error: Formato de texto secreto inválido",
+        encontrado: true
+      };
+    }
+  }
+
+  for (let estudiante in datos) {
+    if (pregunta.includes(estudiante.toLowerCase())) {
+      if (pregunta.includes("cumpleaños")) {
+        respuesta = `INFORMACIÓN CLASIFICADA: El cumpleaños de ${datos[estudiante].nombre} es el ${datos[estudiante].cumpleanos}.`;
+        encontrado = true;
+      } else if (pregunta.includes("crush")) {
+        respuesta = `INFORMACIÓN CLASIFICADA: El crush de ${datos[estudiante].nombre} es ${datos[estudiante].crush}.`;
+        encontrado = true;
+      } else if (pregunta.includes("reputación")) {
+        respuesta = `INFORMACIÓN CLASIFICADA: La reputación de ${datos[estudiante].nombre} es ${datos[estudiante].reputacion}.`;
+        encontrado = true;
+      } else if (pregunta.includes("amigos")) {
+        respuesta = `INFORMACIÓN CLASIFICADA: Los amigos de ${datos[estudiante].nombre} son ${datos[estudiante].amigo}.`;
+        encontrado = true;
+      } else if (pregunta.includes("actividad")) {
+        respuesta = `INFORMACIÓN CLASIFICADA: La actividad favorita de ${datos[estudiante].nombre} es ${datos[estudiante].actividad}.`;
+        encontrado = true;
+      } else if (pregunta.includes("color")) {
+        respuesta = `INFORMACIÓN CLASIFICADA: El color favorito de ${datos[estudiante].nombre} es ${datos[estudiante].color}.`;
+        encontrado = true;
+      } else if (pregunta.includes("telefono")) {
+        respuesta = `INFORMACIÓN CLASIFICADA: El número de teléfono de ${datos[estudiante].nombre} es ${datos[estudiante].telefono}`;
+        encontrado = true;
+      }
+    }
+  }
+
+  if (pregunta.includes("todo sobre")) {
+    for (let estudiante in datos) {
+      if (pregunta.includes(estudiante)) {
+        respuesta = `INFORME COMPLETO - ${datos[estudiante].nombre}:
+        • Cumpleaños: ${datos[estudiante].cumpleanos}
+        • Reputación: ${datos[estudiante].reputacion}
+        • Crush: ${datos[estudiante].crush}
+        • Amigos: ${datos[estudiante].amigo}
+        • Actividad Favorita: ${datos[estudiante].actividad}
+        • Color Favorito: ${datos[estudiante].color}
+        • Teléfono: ${datos[estudiante].telefono}`;
+        encontrado = true;
+        break;
+      }
+    }
+  }
+
+  return {
+    mensaje: respuesta,
+    encontrado: encontrado
+  };
+}
+
+function enviarPregunta() {
+  const input = document.getElementById('userInput');
+  const pregunta = input.value.trim();
+  
+  if (pregunta) {
+    addMessage(pregunta, false);
+    showTypingIndicator();
+    setTimeout(() => {
+      const respuesta = procesarPregunta(pregunta);
+      addMessage(respuesta.mensaje, true, respuesta.error);
+    }, 1500);
+    input.value = '';
+  }
+}
+
+function mostrarAyuda() {
+  document.getElementById('helpModal').style.display = 'block';
+}
+
+function cerrarAyuda() {
+  document.getElementById('helpModal').style.display = 'none';
+}
+
+function cerrarChangelog() {
+  document.getElementById('changelogModal').style.display = 'none';
+}
+
+// Cerrar modal al hacer clic fuera de él
+window.onclick = function(event) {
+  const modal = document.getElementById('helpModal');
+  const changelog = document.getElementById('changelogModal');
+  if (event.target === modal) {
+    modal.style.display = "none";
+  }
+  if (event.target === changelog) {
+    changelog.style.display = "none";
+  }
+}
+
+document.addEventListener('keydown', function(event) {
+  if (event.key === '?') {
+    mostrarAyuda();
+  } else if (event.key === 'Escape') {
+    cerrarAyuda();
+    cerrarChangelog();
+  }
+});
+
+// Actualizar timestamp inicial
+document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+
+function startRGBAnimation() {
+  document.body.classList.add('rgb-active');
+  document.querySelectorAll('h1, .message, button').forEach(el => {
+    el.classList.add('rgb-active');
+  });
+}
+
+function stopRGBAnimation() {
+  document.body.classList.remove('rgb-active');
+  document.querySelectorAll('.rgb-active').forEach(el => {
+    el.classList.remove('rgb-active');
+  });
+}
+</script>
+</body>
+</html>
